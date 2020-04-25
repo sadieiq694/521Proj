@@ -8,6 +8,9 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +28,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
+    public void sendPacket(View view) throws IOException {
+        // Do something in response to crawl button
+        //update gui w/ suspicion level
+        System.out.println("Initializing");
+        init();
+        System.out.println("Initialized");
+        String[] packets = {"p1", "p2", "p3"}; // REPLACE WITH ACTUAL PACKETS (converts string to byte array)
+        for(int i = 0; i < packets.length; i++)
+        {
+            write(packets[i]);
+            TextView num = (TextView) findViewById(R.id.str2);
+            String display = "Number of packets sent: " + i;
+            num.setText(display);
+        }
+    }
+
     private void init() throws IOException {
+        // initialize
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (blueAdapter != null) {
             if (blueAdapter.isEnabled()) {
@@ -33,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(bondedDevices.size() > 0) {
                     Object[] devices = (Object []) bondedDevices.toArray();
-                    BluetoothDevice device = (BluetoothDevice) devices[position];
+                    BluetoothDevice device = (BluetoothDevice) devices[0];
                     ParcelUuid[] uuids = device.getUuids();
                     BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuids[0].getUuid());
                     socket.connect();
@@ -50,20 +70,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void write(String s) throws IOException {
         outputStream.write(s.getBytes());
-    }
-
-    public void run() {
-        final int BUFFER_SIZE = 1024;
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int bytes = 0;
-        int b = BUFFER_SIZE;
-
-        while (true) {
-            try {
-                bytes = inStream.read(buffer, bytes, BUFFER_SIZE - bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

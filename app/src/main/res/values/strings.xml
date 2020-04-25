@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BluetoothApp</string>
+    <string name="main_page_text">Press this button to send bluetooth packets</string>
+</resources>
